@@ -34,7 +34,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'xl.App'
+    mainClass = 'xl.gui.XL'
 }
 
 tasks.named('test') {
