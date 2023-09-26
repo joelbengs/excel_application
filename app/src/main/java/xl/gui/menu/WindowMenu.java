@@ -6,6 +6,7 @@ import javax.swing.JMenu;
 import xl.gui.XL;
 import xl.gui.XLList;
 
+@SuppressWarnings("deprecation")
 public class WindowMenu extends JMenu implements Observer {
 
     private XLList xlList;
