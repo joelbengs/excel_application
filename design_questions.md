@@ -151,8 +151,7 @@ The Controller, because it has access both to the view (to display for example e
 We want to imlemement Observer Synchronization.
 
 ### F2: How does the system keep track of which cell is currently selected? (This depends on how the `Controller` is implemented)
-
-Through the Observer Synchronization.
+It should not be dealt with in the model (i,e, not in the Sheet that implements Environment).
 
 ### F3: How are GUI updates triggered? (This depends on how the `Controller` is implemented)
 
@@ -162,4 +161,22 @@ Through the Observer Synchronization.
 
 ### G1: How are circular references detected?
 
+Do a breadth first or depth first search of dependencies. But this is actually 
+Add a new bomb class that implements the interface Cell. It has a method double `value(Environment)`. CellFactory will create a new cell of the new expression. Save the old content of the currently selected cell to the side. Add an instance of the bomb class in its place. Try to calculate the value of the new expression. If you run into the bomb, you have circular reference. Then deal with it, and add the old saved away value, and give error. If on the other hand you can calculate the new value (without a bomb), then its valid and it can be added as valid.
+
 We add the open source version of Neo4J's graph database as a dependency. We let each cell be a node, and any interdependencies are edges in the graph. Once we have a closed loop in the graph, we have a circular dependencies in the spreadsheet.
+
+## Notes from seminar
+We will use a CellFactory to create Cells. In the previous project, the factories could be discarded after use. In this project, the factory is kept and for each new entry, the "Sheet" will use the CellFactory to create a new instance of the interface Cell (ExprCell or ComCell).
+
+We shall use a map - but not a hashmap! Because under the hood, the hashmap creates a vector. To be useful, its a large vector (by default very large). The assignment was to not create spare memory -> use treemap which searches in `log(n)`.
+
+BinaryExpr uses template method.
+
+What implements environment? The class `sheet` will do so, which is the class that holds the `treemap`. It will, among other things, implement the value method from `Environment`. We use the abstract interface `Environment` instead of the impelementing class because of __Dependency Inversion__! Thanks to this, we can run the program despite not having implemented the `Environment`.
+
+D3L The Sheet class must have functionality to retrive both value in cells and the formulas. A cell should display it's value, but if the user presses it, the _forumla_ should be displayed in the editor instead.
+
+E1: The model should do the validity checks. SRP. If invalid, we shouldn't save the new input. The Cellfactory seems to reject in his case. The proffesor used util.XLexception to throw the fault.
+
+Controller questions: Flow sync is easier. With observable: View gets a new input. Model recieves it straight from view. The controller firest setChanged and one more. The view is then notified directly from the model. So there is actually 
