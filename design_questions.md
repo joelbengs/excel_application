@@ -148,7 +148,7 @@ The model (i.e. the `expr` package).
 
 ### E5: Overview: what package is responsible for error handling, and how?
 
-The Controller, because it has access both to the view (to display for example error messages) and the model. The View will only communicate errors to the user.
+The Controller, because it has access both to the view (to display for example error messages) and the model. The View will only communicate errors to the user. The model only rejects new cell entries.
 
 ## Control
 
@@ -157,7 +157,7 @@ The Controller, because it has access both to the view (to display for example e
 We want to imlemement Observer Synchronization.
 
 ### F2: How does the system keep track of which cell is currently selected? (This depends on how the `Controller` is implemented)
-It should not be dealt with in the model (i,e, not in the Sheet that implements Environment).
+It should not be dealt with in the model (i,e, not in the Sheet that implements Environment). Either the view or the controller keeps track of this.
 
 ### F3: How are GUI updates triggered? (This depends on how the `Controller` is implemented)
 
