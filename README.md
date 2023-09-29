@@ -15,17 +15,17 @@
 
 The classes are located in the gui package.
 
-- A `SlotLabel` displays the contents of one cell in the spreadsheet. `SlotLabel` extends `ColoredLabel`, which in turn extends `JLabel` – a Swing GUI element for displaying strings.
++ A `SlotLabel` displays the contents of one cell in the spreadsheet. `SlotLabel` extends `ColoredLabel`, which in turn extends `JLabel` – a Swing GUI element for displaying strings.
 
-- `SlotLabels` is the view for all of the cells in the spreadsheet. This class has a field with the corresponding `SlotLabel` for each position in the cell grid.
++ `SlotLabels` is the view for all of the cells in the spreadsheet. This class has a field with the corresponding `SlotLabel` for each position in the cell grid.
 
-- `Editor` extends `JTextField` and as such, it's a textfield that the user can edit text with. It is the users main point of interaction with the application. The purpose of this text field is to enable the user to write values and formulas to be assigned to a cell. The `Editor` view is presented above the cells, next to the status bar.
++ `Editor` extends `JTextField` and as such, it's a textfield that the user can edit text with. It is the users main point of interaction with the application. The purpose of this text field is to enable the user to write values and formulas to be assigned to a cell. The `Editor` view is presented above the cells, next to the status bar.
 
-- The purpose of the `StatusLabel` class is to present status messages to the user. This label is presented next to a label showing the currently selected cell. They are bundled together in the `StatusPanel` class. The `StatusLabel` class implements `Observer` to be able to react to changes in the application state and update itself accordingly.
++ The purpose of the `StatusLabel` class is to present status messages to the user. This label is presented next to a label showing the currently selected cell. They are bundled together in the `StatusPanel` class. The `StatusLabel` class implements `Observer` to be able to react to changes in the application state and update itself accordingly.
 
-- `CurrentLabel` is a view displaying the currently selected cell. It is bundled together with a `StatusLabel` instance in a `StatusPanel` instance.
++ `CurrentLabel` is a view displaying the currently selected cell. It is bundled together with a `StatusLabel` instance in a `StatusPanel` instance.
 
-- `XL` is the main class of the application. It initializes the various Model instances and sets up the views. By having a list of currently active spreadsheets, it supports opening several spreadsheets at once.
++ `XL` is the main class of the application. It initializes the various Model instances and sets up the views. By having a list of currently active spreadsheets, it supports opening several spreadsheets at once.
 
 + **A4**: Användningsfall: Någon skriver talet 42 i `Editor`, vad
           skall hända innan värdet syns i vyn (dvs vilken väg skall
@@ -100,3 +100,124 @@ För att köra programmet kan man skriva:
 ~~~
 
 i projektets rot-katalog.
+
+## Klassdiagram
+
+~~~mermaid
+classDiagram
+    class Cell {
+        +value(Environment): Double
+        +toString() : String
+    }
+    <<Interface>> Cell
+
+    Cell <|.. Expr
+    Cell <|.. Comment
+    Cell <|.. Bomb
+
+    class Expr{
+        + toString() String
+        + toString(Int)* String
+        + value(Environment)* Double
+    }
+    <<Abstract>> Expr
+
+    Expr <|.. Num
+    Expr <|.. BinaryExpr
+    Expr <|.. Variable
+
+    Expr o-- BinaryExpr
+
+    class Num {
+        -value : Double
+        +Num(Double)
+        +value(Environment) Double
+        +toString(Int) String
+    }
+
+    class BinaryExpr {
+        - expr1 : Expr
+        - expr2 : Expr
+        # precedence1 : Int
+        # precedence2 : Int
+        #BinaryExpr(Expr, Expr)
+        #op(Double, Double)* : Double
+        #opString()* : String
+        +value(Environment): Double
+        +toString(Int) : String
+    }
+    <<Abstract>> BinaryExpr
+    BinaryExpr <|.. Add
+    BinaryExpr <|.. Sub
+    BinaryExpr <|.. Mul
+    BinaryExpr <|.. Div
+
+    class Add {
+        +Add(Expr, Expr)
+        +op(Double, Double) : Double
+        #opString() : String
+    }
+
+    class Sub {
+        +Sub(Expr, Expr)
+        +op(Double, Double) : Double
+        #opString() : String
+    }
+
+    class Mul {
+        +Mul(Expr, Expr)
+        +op(Double, Double) : Double
+        #opString() : String
+    }
+
+    class Div {
+        +Div(Expr, Expr)
+        +op(Double, Double) : Double
+        #opString() : String
+    }
+
+    class Variable {
+        -name : String
+        +Variable(String)
+        +toString(Int) : String
+        +value(Environment) : Double
+    }
+
+    class Comment{
+        - text : String
+        + Comment(String)
+        + value(Environment): Double
+        + toString(Environment) : String
+    }
+
+    class Bomb{
+        +value() : Double
+        +toString() : String
+    }
+
+    class Environment{
+        + value(String) : Double
+    }
+    <<Interface>> Environment
+
+    class Sheet {
+        - map : TreeMap~Coordinate-Cell~
+    }
+
+    class Coordinate {
+        - row : Int
+        - col : Int
+        + Coordinate(Int, Int)
+        + getRow() : Int
+        + getCol() : Int
+    }
+
+    Environment <|.. Sheet
+
+    Coordinate -- Sheet
+
+    class ExprParser {
+        + build(Reader) : Expr
+    }
+
+~~~
