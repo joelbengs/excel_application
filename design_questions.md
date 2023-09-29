@@ -40,15 +40,13 @@ The path the value takes is therefore View ➡️ Controller ️➡️ ️️Mod
 
 ### B1: How are addresses represented (this has already been decided upon in the provided code)? Can you come up with an alternative representation?
 
-Internally, the cells are represented as a one-dimensional list (more specifically an `ArrayList`), with the zeroeth element being the top-left cell, and the last element the bottom-right cell. To the user, the cells are represented by a letter indicating the column and a number indicating the row, for example 'A1' for the top-left cell.
-
-If one wishes to have a more similar representation internally as the one presented to the user, one could store the cell contents in two dimensions, for example a matrix or a list of lists.
-
-A more 'absurd' representation is a variant of a linked list, where each cell contains references to its four neighbouring nodes. A pro of this implementation would be fast access to neighbouring nodes, and a good basis for implementing algorithms that depend on neighbours. If our sheet were to be the basis for a graph database, this could be used to enable nodes and vectors.
+In the provided code, `Strings` are used to represent adresses. This is an easy solution as the `TreeMap` will be able to sort the words on the natural ordering of `String`. However, we don't fancy bulding a _stringly typed_ application, so we will implement an adress class called `Coordinate`
 
 ### B2: How can we model the fact that a cell can contain either an expression or a comment?
 
-We could implement an interface (or abstract class) for cell contents, which is implemented by two classes: `Expression` and `Comment`. Please note that this representation is used in the model only and is separate from what is displayed in each `SlotLabel`, which preferably could still store its contents to be displayed as a simple `String`.
+We can implement an interface (or abstract class) for cell contents, which is implemented by two classes: `Expression` and `Comment`. This is dependency inversion. Please note that this representation is used in the model only and is separate from what is displayed in each `SlotLabel`, which preferably could still store its contents to be displayed as a simple `String`.
+
+A `CellFactory` will be used to create `Cell` instances.
 
 ### B3: What kind of cell do we get when we enter the value 42 into the editor?
 
@@ -62,29 +60,37 @@ We also need a model for all the cells in the sheet. This could preferably be a 
 
 ### B5: What class keeps track of all the cells?
 
-A class implementing the `Environment` interface.
+A class implementing the `Environment` interface, henceforth called the `Sheet`. This enforces dependency inversion.
 
 ### B6: What data structure is best suited to keep track of the cells?
 
+A `TreeMap` is the mest option.
+
 A list or matrix is the data structure that immediately comes to mind, but this would violate the customer requirement that the memory usage only be dependent on the information actually inputted – by doing it this way we need an instance for each location in the sheet regardless of it being filled in or not.
 
-A simple way of doing it would be to have some kind of `Map` mapping the cell index to each cell. If the cell index is encapsulated in a `CellCoordinate` class the type of the cell store would be `Map<CellCoordinate, Cell>`. HashMap would be suitable for fast access, but a difficulty is to override hashCode(). We had an interesting discussion about the posibility to guarantee a unique mapping of R^2 to R, continous or discreet. With the finite nature of `int`, we are sure that we can't map each unique `CellCoordinate` (`row, col`) to a unique hashCode.
+A simple way of doing it would be to have some kind of `Map` mapping the cell index to each cell. If the cell index is encapsulated in a `Coordinate` class the type of the cell store would be `Map<Coordinate, Cell>`. HashMap would be suitable for fast access, but a difficulty is to override hashCode(). We had an interesting discussion about the posibility to guarantee a unique mapping of R^2 to R, continous or discreet. With the finite nature of `int`, we are sure that we can't map each unique `Coordinate` (`row, col`) to a unique hashCode.
+
+However, the `HashMap` will create an internal vector (of great length) which violates the customer's requirement of sparse memory need. Thus a `TreeMap` is the best option: its a map with low memory need and an acceptable time complexity of `log(n)`.
+
+A more absurd representation is a variant of a linked list, where each cell contains references to its four neighbouring nodes. A pro of this implementation would be fast access to neighbouring nodes, and a good basis for implementing algorithms that depend on neighbours. If our sheet were to be the basis for a graph database, this could be used to enable nodes and vectors.
 
 ### B7: The assignment above contains the following wording. How do we ensure that we do not use more memory than required?
 
-"The customer has expressed the requirement that the memory usage for the spreadsheet model must not depend on the size of the sheet, but only on the amount of information that has been inputted."
+_"The customer has expressed the requirement that the memory usage for the spreadsheet model must not depend on the size of the sheet, but only on the amount of information that has been inputted."_
 
-This was covered under our B6-discussion.
+This was covered under our B6-discussion. A Treemap doesn't use more memory than necessary.
 
 ## Model: `Environment`
 
 ### C1: When an expression containing an address is computed, we use `Environment` -- why?
 
+We use the intercace `Environment` in place of its implementation `sheet` in order to achieve dependency inversion, an important SOLID principle.
+
 Interface `Expr` specifies the method `value(Environment): double`, which returnts the value of the expression. The parameter `Environment` is used to retrieve the values of the variables that the expression referes to. E.g. a cell in the spreadsheet can contain the logic `a1 + a2`. Given that the variable have values, `a1 = 3`, `a2 = 5`, the call to `Expr.value(Environment)` should then return `8`.
 
 ### C2: Which class should implement `Environment`?
 
-Our proposed `MapEnvironment` class.
+Our proposed `Sheet` class.
 
 Are we allowed to change the signature of `Environment.value(String)`? In that case we would prefer for the method to take one of our own `CellCoordinate` values.
 
@@ -108,7 +114,7 @@ We want the GUI to be able to access `String` representations of all the various
 
 ### D3: When the user clicks in a cell, and our `Editor` gets updated, what value, and what type do we want to get back, to put in the editor?
 
-We want a `String` representation of what is currently in the cell. This `String` needs to be in the right format so that it can be parsed again into a `Cell`.
+The Sheet class must have functionality to retrive both value and formulas in it's cells. In the visual representation, a cell should display it's _value_, but if the user presses it, the _forumla_ should be displayed in the editor instead.
 
 ## Relation between M and C/V: error handling
 
@@ -161,22 +167,6 @@ Through the Observer Synchronization.
 
 ### G1: How are circular references detected?
 
-Do a breadth first or depth first search of dependencies. But this is actually 
-Add a new bomb class that implements the interface Cell. It has a method double `value(Environment)`. CellFactory will create a new cell of the new expression. Save the old content of the currently selected cell to the side. Add an instance of the bomb class in its place. Try to calculate the value of the new expression. If you run into the bomb, you have circular reference. Then deal with it, and add the old saved away value, and give error. If on the other hand you can calculate the new value (without a bomb), then its valid and it can be added as valid.
+Add a new `bomb class` that implements the interface `Cell`. The `bomb` class has a method `value(Environment)`. An expression is submitted for approval.  CellFactory will create a new cell of the new expression. The environment will save the old content of the currently selected cell to a temporary variable `temp`. The environment adds an instance of the `bomb` class in its place. The value of the new expression is calculated as a test for circular dependency. If the calculations run into the `bomb`, there is a circular reference. Then deal with it, add the old value `temp` back, reject the candidate and let the view or the controller present the error to the user.. If on the other hand you can calculate the new value successfully (without a bomb), then its valid and it can be added as valid, and the `temp` value discarded.
 
-We add the open source version of Neo4J's graph database as a dependency. We let each cell be a node, and any interdependencies are edges in the graph. Once we have a closed loop in the graph, we have a circular dependencies in the spreadsheet.
-
-## Notes from seminar
-We will use a CellFactory to create Cells. In the previous project, the factories could be discarded after use. In this project, the factory is kept and for each new entry, the "Sheet" will use the CellFactory to create a new instance of the interface Cell (ExprCell or ComCell).
-
-We shall use a map - but not a hashmap! Because under the hood, the hashmap creates a vector. To be useful, its a large vector (by default very large). The assignment was to not create spare memory -> use treemap which searches in `log(n)`.
-
-BinaryExpr uses template method.
-
-What implements environment? The class `sheet` will do so, which is the class that holds the `treemap`. It will, among other things, implement the value method from `Environment`. We use the abstract interface `Environment` instead of the impelementing class because of __Dependency Inversion__! Thanks to this, we can run the program despite not having implemented the `Environment`.
-
-D3L The Sheet class must have functionality to retrive both value in cells and the formulas. A cell should display it's value, but if the user presses it, the _forumla_ should be displayed in the editor instead.
-
-E1: The model should do the validity checks. SRP. If invalid, we shouldn't save the new input. The Cellfactory seems to reject in his case. The proffesor used util.XLexception to throw the fault.
-
-Controller questions: Flow sync is easier. With observable: View gets a new input. Model recieves it straight from view. The controller firest setChanged and one more. The view is then notified directly from the model. So there is actually 
+An alternative and more fun solution is our first idea: We add the open source version of Neo4J's graph database as a dependency. We let each cell be a node, and any interdependencies are edges in the graph. Once we have a closed loop in the graph, we have a circular dependencies in the spreadsheet.
