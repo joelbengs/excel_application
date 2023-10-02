@@ -17,6 +17,8 @@ public class XL extends JFrame {
     private XLCounter counter;
     private StatusLabel statusLabel = new StatusLabel();
     private XLList xlList;
+    private Sheet sheet;
+    private InputParser parser;
 
     // Constructure used by NewMenuItem.java when creating a new instance of the
     // application from the menu bar, for the purpose of using
@@ -25,6 +27,7 @@ public class XL extends JFrame {
         this(oldXL.xlList, oldXL.counter);
     }
 
+    @SuppressWarnings("deprecation")
     public XL(XLList xlList, XLCounter counter) {
         super("Untitled-" + counter);
         this.xlList = xlList;
@@ -32,13 +35,19 @@ public class XL extends JFrame {
         xlList.add(this);
         counter.increment();
 
-        Sheet sheet = new Sheet();
-        var parser = new InputParser();
+        this.sheet = new Sheet();
+        this.parser = new InputParser();
+
         sheet.addToSheet(new Coordinate("A1"), parser.parse("10"));
 
-        JPanel statusPanel = new StatusPanel(statusLabel);
-        SheetPanel sheetPanel = new SheetPanel(ROWS, COLUMNS);
-        sheetPanel.update(sheet);
+        // this is a part of the model
+        SelectedCell selectedCell = new SelectedCell();
+
+        JPanel statusPanel = new StatusPanel(statusLabel, selectedCell);
+        SheetPanel sheetPanel = new SheetPanel(ROWS, COLUMNS, sheet);
+
+        sheet.addObserver(sheetPanel);
+
         Editor editor = new Editor();
         add(NORTH, statusPanel);
         add(CENTER, editor);
@@ -54,6 +63,14 @@ public class XL extends JFrame {
     public void rename(String title) {
         setTitle(title);
         xlList.setChanged();
+    }
+
+    public Sheet getSheet() {
+        return this.sheet;
+    }
+
+    public InputParser getInputParser() {
+        return this.parser;
     }
 
     public static void main(String[] args) {

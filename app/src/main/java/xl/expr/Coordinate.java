@@ -7,14 +7,25 @@ public class Coordinate implements Comparable<Coordinate> {
     public Coordinate(String name) {
         this.row = getRow(name);
         this.col = getCol(name);
+        System.out.println("This row is " + this.row + " and this col is " + this.col);
     }
 
     private static int getRow(String name) {
-        return name.charAt(0) - 'A' + 1;
+        // extract just the letters from the name
+        var letters = name.replaceAll("\\d.*", "");
+        // reverse the letters to make the last letter the least significant digit
+        var reversedLetters = new StringBuilder(letters).reverse().toString();
+        // consider each letter as a base-26 digit
+        int value = 0;
+        for (int i = 0; i < reversedLetters.length(); i++) {
+            var letterValue = (reversedLetters.charAt(i) - 'A' + 1);
+            value += letterValue * Math.pow(26, i);
+        }
+        return value;
     }
 
     private static int getCol(String name) {
-        return Integer.parseInt(name.substring(1));
+        return Integer.parseInt(name.replaceAll("[^0-9]", ""));
     }
 
     @Override
