@@ -38,8 +38,6 @@ public class XL extends JFrame {
         this.sheet = new Sheet();
         this.parser = new InputParser();
 
-        sheet.addToSheet(new Coordinate("A1"), parser.parse("10"));
-
         // this is a part of the model
         SelectedCell selectedCell = new SelectedCell();
 
@@ -47,6 +45,8 @@ public class XL extends JFrame {
         SheetPanel sheetPanel = new SheetPanel(ROWS, COLUMNS, sheet);
 
         sheet.addObserver(sheetPanel);
+
+        sheet.addToSheet(new Coordinate("A1"), parser.parse("10"));
 
         Editor editor = new Editor();
         add(NORTH, statusPanel);
