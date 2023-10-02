@@ -13,7 +13,8 @@ public class TestExpr {
             expr = parser.build("A3+A2*A1");
             Environment env =
                     new Environment() {
-                        public double value(String name) {
+                        public double value(Coordinate coordinate) {
+                            String name = coordinate.toString();
                             if (name.equals("A3")) return 1;
                             if (name.equals("A2")) return 2;
                             if (name.equals("A1")) return 3;
