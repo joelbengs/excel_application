@@ -30,7 +30,11 @@ public class Sheet extends Observable implements Environment {
             cell.value(this);
         } catch (XLException e) {
             // put back what worked before
-            this.repository.put(coordinate, previousWorking);
+            // (if there was something there before)
+            if (previousWorking != null) {
+                this.repository.put(coordinate, previousWorking);
+            }
+
             throw e;
         }
         // if no exception was thrown, we can put the cell in the sheet
