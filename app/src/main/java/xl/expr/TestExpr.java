@@ -1,5 +1,7 @@
 package xl.expr;
 
+import java.util.Map;
+import java.util.Optional;
 import xl.expr.factories.InputParser;
 
 public class TestExpr {
@@ -18,18 +20,25 @@ public class TestExpr {
         Environment env =
                 new Environment() {
                     @Override
-                    public double value(Coordinate coordinate) {
+                    public Optional<Double> value(Coordinate coordinate) {
                         String name = coordinate.toString();
-                        if (name.equals("A3")) return 1;
-                        if (name.equals("A2")) return 2;
-                        if (name.equals("A1")) return 3;
+                        if (name.equals("A3")) return Optional.of(1.0);
+                        if (name.equals("A2")) return Optional.of(2.0);
+                        if (name.equals("A1")) return Optional.of(3.0);
                         System.out.println(name + " is undefined");
-                        return 0;
+                        return Optional.of(0.0);
                     }
 
                     @Override
                     public void addToSheet(Coordinate coordinate, Cell cell) {
                         // do nothing
+                    }
+
+                    @Override
+                    public Map<Coordinate, Cell> getRepository() {
+                        // TODO Auto-generated method stub
+                        throw new UnsupportedOperationException(
+                                "Unimplemented method 'getRepository'");
                     }
                 };
         System.out.println(expr);

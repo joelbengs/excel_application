@@ -1,5 +1,7 @@
 package xl.expr;
 
+import xl.util.XLException;
+
 class Variable extends Expr {
 
     private Coordinate coordinate;
@@ -13,6 +15,8 @@ class Variable extends Expr {
     }
 
     public double value(Environment env) {
-        return env.value(coordinate);
+        var value = env.value(coordinate);
+        if (value.isEmpty()) throw new XLException("Variable " + coordinate + " is undefined");
+        return value.get();
     }
 }

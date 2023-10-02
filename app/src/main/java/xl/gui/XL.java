@@ -6,6 +6,9 @@ import static java.awt.BorderLayout.SOUTH;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import xl.expr.Coordinate;
+import xl.expr.Sheet;
+import xl.expr.factories.InputParser;
 import xl.gui.menu.XLMenuBar;
 
 public class XL extends JFrame {
@@ -15,6 +18,9 @@ public class XL extends JFrame {
     private StatusLabel statusLabel = new StatusLabel();
     private XLList xlList;
 
+    // Constructure used by NewMenuItem.java when creating a new instance of the
+    // application from the menu bar, for the purpose of using
+    // the global list and the global counter for all applications
     public XL(XL oldXL) {
         this(oldXL.xlList, oldXL.counter);
     }
@@ -25,8 +31,14 @@ public class XL extends JFrame {
         this.counter = counter;
         xlList.add(this);
         counter.increment();
+
+        Sheet sheet = new Sheet();
+        var parser = new InputParser();
+        sheet.addToSheet(new Coordinate("A1"), parser.parse("10"));
+
         JPanel statusPanel = new StatusPanel(statusLabel);
-        JPanel sheetPanel = new SheetPanel(ROWS, COLUMNS);
+        SheetPanel sheetPanel = new SheetPanel(ROWS, COLUMNS);
+        sheetPanel.update(sheet);
         Editor editor = new Editor();
         add(NORTH, statusPanel);
         add(CENTER, editor);
@@ -38,6 +50,7 @@ public class XL extends JFrame {
         setVisible(true);
     }
 
+    // Used by LoadMenuItem.java to rename an application instance by the name of the loaded file
     public void rename(String title) {
         setTitle(title);
         xlList.setChanged();

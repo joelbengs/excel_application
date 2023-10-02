@@ -2,6 +2,7 @@ package xl.expr;
 
 import java.util.Map;
 import java.util.Observable;
+import java.util.Optional;
 import java.util.TreeMap;
 import xl.util.XLException;
 
@@ -14,8 +15,11 @@ public class Sheet extends Observable implements Environment {
     }
 
     @Override
-    public double value(Coordinate coordinate) {
-        return this.repository.get(coordinate).value(this);
+    public Optional<Double> value(Coordinate coordinate) {
+        if (!this.repository.containsKey(coordinate)) {
+            return Optional.empty();
+        }
+        return Optional.of(this.repository.get(coordinate).value(this));
     }
 
     @Override
@@ -44,5 +48,10 @@ public class Sheet extends Observable implements Environment {
         // notify observers that the value of the cell has changed
         this.setChanged();
         this.notifyObservers();
+    }
+
+    @Override
+    public Map<Coordinate, Cell> getRepository() {
+        return repository;
     }
 }

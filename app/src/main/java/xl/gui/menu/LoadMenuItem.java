@@ -11,9 +11,7 @@ class LoadMenuItem extends OpenMenuItem {
         super(xl, statusLabel, "Load");
     }
 
-    protected void action(String path) throws FileNotFoundException {
-        // TODO
-    }
+    protected void action(String path) throws FileNotFoundException {}
 
     protected int openDialog(JFileChooser fileChooser) {
         return fileChooser.showOpenDialog(xl);
