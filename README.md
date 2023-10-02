@@ -100,11 +100,14 @@ För att köra programmet kan man skriva:
 ~~~
 
 i projektets rot-katalog.
+<<Interface>> CellFactory
 
-## Klassdiagram
+
+## Klassdiagram Cell
 
 ~~~mermaid
 classDiagram
+    
     class Cell {
         +value(Environment): Double
         +toString() : String
@@ -125,7 +128,6 @@ classDiagram
     Expr <|.. Num
     Expr <|.. BinaryExpr
     Expr <|.. Variable
-
     Expr o-- BinaryExpr
 
     class Num {
@@ -194,6 +196,11 @@ classDiagram
         +value() : Double
         +toString() : String
     }
+~~~
+
+## Klassdiagram Sheet
+~~~mermaid
+classDiagram
 
     class Environment{
         + value(String) : Double
@@ -202,6 +209,7 @@ classDiagram
 
     class Sheet {
         - map : TreeMap~Coordinate-Cell~
+        +addToSheet(Coordinate, Cell)
     }
 
     class Coordinate {
@@ -212,12 +220,52 @@ classDiagram
         + getCol() : Int
     }
 
-    Environment <|.. Sheet
+    class CellFactory {
+        +build(Reader) : Cell
+    }
+    <<Interface>> CellFactory
 
-    Coordinate -- Sheet
+    class ExprFactory {
+        - exprParser : ExprParser
+        +ExprFactory()
+        +build(Reader) : Cell
+    }
+
+    class CommentFactory {
+        +build(Reader) : Cell
+    }
+
+    class BombFactory {
+        +build(Reader) : Cell
+    }
+
+    class InputParser{
+        - expr: ExprFactory 
+        - comment : CommentFactory
+        - bomb : BombFactory
+        + parse(String)
+    }
 
     class ExprParser {
-        + build(Reader) : Expr
+        + build(Reader) : Cell
     }
+
+    class Cell {
+        +value(Environment): Double
+        +toString() : String
+    }
+    <<Interface>> Cell
+
+    CellFactory <|.. ExprFactory
+    CellFactory <|.. CommentFactory
+    CellFactory <|.. BombFactory
+    ExprFactory -- ExprParser
+    ExprParser -- Cell
+    CommentFactory -- Cell
+    BombFactory -- Cell
+    Sheet -- Coordinate 
+    Sheet -- InputParser
+    InputParser -- CellFactory
+    Environment <|.. Sheet
 
 ~~~
