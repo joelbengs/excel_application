@@ -1,6 +1,8 @@
 package xl.gui.menu;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Scanner;
 import javax.swing.JFileChooser;
 import xl.expr.Coordinate;
 import xl.gui.StatusLabel;
@@ -13,8 +15,15 @@ class LoadMenuItem extends OpenMenuItem {
     }
 
     protected void action(String path) throws FileNotFoundException {
-        String[] equations = path.split("\n");
-        for (String equation : equations) {
+        File file = new File(path);
+        if (!file.exists()) {
+            throw new FileNotFoundException();
+        }
+        var reader = new Scanner(file);
+
+        while (reader.hasNextLine()) {
+            var equation = reader.nextLine();
+
             String[] parts = equation.split("=");
             String key = parts[0];
             String value = parts[1];
@@ -22,6 +31,8 @@ class LoadMenuItem extends OpenMenuItem {
                     .getSheet()
                     .addToSheet(new Coordinate(key), this.xl.getInputParser().parse(value));
         }
+
+        reader.close();
     }
 
     protected int openDialog(JFileChooser fileChooser) {
