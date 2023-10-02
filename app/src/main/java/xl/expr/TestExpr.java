@@ -13,6 +13,7 @@ public class TestExpr {
             expr = parser.build("A3+A2*A1");
             Environment env =
                     new Environment() {
+                        @Override
                         public double value(Coordinate coordinate) {
                             String name = coordinate.toString();
                             if (name.equals("A3")) return 1;
@@ -20,6 +21,11 @@ public class TestExpr {
                             if (name.equals("A1")) return 3;
                             System.out.println(name + " is undefined");
                             return 0;
+                        }
+
+                        @Override
+                        public void addToSheet(Coordinate coordinate, Cell cell) {
+                            // do nothing
                         }
                     };
             System.out.println(expr);
