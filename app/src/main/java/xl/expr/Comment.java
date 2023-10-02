@@ -16,9 +16,4 @@ public class Comment implements Cell {
     public String toString() {
         return message;
     }
-
-    @Override
-    public String toString(int prec) {
-        return message;
-    }
 }

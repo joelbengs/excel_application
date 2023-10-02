@@ -1,19 +1,44 @@
 package xl.expr;
 
 import java.util.Map;
+import java.util.Observable;
 import java.util.TreeMap;
+import xl.util.XLException;
 
-public class Sheet implements Environment {
+@SuppressWarnings("deprecation")
+public class Sheet extends Observable implements Environment {
     private Map<Coordinate, Cell> repository;
-    private CellFactory cf;
 
     public Sheet() {
         this.repository = new TreeMap<Coordinate, Cell>();
-        cf = new CellFactory();
     }
 
     @Override
     public double value(Coordinate coordinate) {
         return this.repository.get(coordinate).value(this);
+    }
+
+    @Override
+    public void addToSheet(Coordinate coordinate, Cell cell) {
+        Cell previousWorking = this.repository.get(coordinate);
+        Bomb bomb = new Bomb();
+        this.repository.put(coordinate, bomb);
+        try {
+            // this will throw if there is a circular reference
+            // we do not need to save the result,
+            // we're just calling it to see if it throws
+            cell.value(this);
+        } catch (XLException e) {
+            // put back what worked before
+            this.repository.put(coordinate, previousWorking);
+            throw e;
+        }
+        // if no exception was thrown, we can put the cell in the sheet
+        // as we know it doesn't have a circular reference
+        this.repository.put(coordinate, cell);
+
+        // notify observers that the value of the cell has changed
+        this.setChanged();
+        this.notifyObservers();
     }
 }
