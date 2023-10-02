@@ -8,7 +8,7 @@ package xl.expr;
  * @see Environment
  * @author Lennart Andersson
  */
-public abstract class Expr {
+public abstract class Expr implements Cell {
 
     /**
      * The <code>toString</code> method returns a <code>String</code> representation of this
