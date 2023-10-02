@@ -14,7 +14,7 @@ public class Coordinate implements Comparable<Coordinate> {
     }
 
     private static int getCol(String name) {
-        return Integer.parseInt(String.valueOf(name.charAt(1)));
+        return Integer.parseInt(name.substring(1));
     }
 
     @Override
