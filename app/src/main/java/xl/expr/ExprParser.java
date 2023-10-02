@@ -107,7 +107,7 @@ public class ExprParser {
                 if (!Pattern.matches("[A-Z][0-9]+", address))
                     throw new XLException("illegal address: " + address);
                 token = tokenizer.nextToken();
-                return new Variable(address);
+                return new Variable(new Coordinate(address));
             case StreamTokenizer.TT_EOF:
                 throw new XLException("unexpected end of text");
             default:

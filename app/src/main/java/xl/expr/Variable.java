@@ -2,21 +2,17 @@ package xl.expr;
 
 class Variable extends Expr {
 
-    /*
-     * `String` needs to be changed to `CellCoordinate` if we decide not to identify
-     * variables by name but instead by their coordinate in the spreadsheet.
-     */
-    private String name;
+    private Coordinate coordinate;
 
-    Variable(String name) {
-        this.name = name;
+    public Variable(Coordinate coordinate) {
+        this.coordinate = coordinate;
     }
 
     public String toString(int prec) {
-        return name.toString();
+        return coordinate.toString();
     }
 
     public double value(Environment env) {
-        return env.value(name);
+        return env.value(coordinate);
     }
 }

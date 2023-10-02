@@ -1,6 +1,6 @@
 package xl.expr;
 
-public class Coordinate {
+public class Coordinate implements Comparable<Coordinate> {
     private int row;
     private int col;
 
@@ -9,11 +9,29 @@ public class Coordinate {
         this.col = getCol(name);
     }
 
-    private int getRow(String name) {
+    private static int getRow(String name) {
         return name.charAt(0) - 'A' + 1;
     }
 
-    private int getCol(String name) {
+    private static int getCol(String name) {
         return Integer.parseInt(String.valueOf(name.charAt(1)));
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf((char) ('A' + row - 1)) + col;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Coordinate)) return false;
+
+        Coordinate otherCoordinate = (Coordinate) other;
+        return row == otherCoordinate.row && col == otherCoordinate.col;
+    }
+
+    @Override
+    public int compareTo(Coordinate o) {
+        return toString().compareTo(o.toString());
     }
 }
