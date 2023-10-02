@@ -1,5 +1,8 @@
 package xl.expr;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 public class Sheet implements Environment {
     private Map<Coordinate, Cell> repository;
     private CellFactory cf;
@@ -9,5 +12,8 @@ public class Sheet implements Environment {
         cf = new CellFactory();
     }
 
-    public double value(String name) {}
+    @Override
+    public double value(Coordinate coordinate) {
+        return this.repository.get(coordinate).value(this);
+    }
 }
