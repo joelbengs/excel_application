@@ -30,7 +30,7 @@ public class TestExpr {
                     }
 
                     @Override
-                    public void addToSheet(Coordinate coordinate, Cell cell) {
+                    public void addToSheet(Coordinate coordinate, String input) {
                         // do nothing
                     }
 
@@ -40,8 +40,15 @@ public class TestExpr {
                         throw new UnsupportedOperationException(
                                 "Unimplemented method 'getRepository'");
                     }
+
+                    @Override
+                    public Optional<String> stringValue(Coordinate coordinate) {
+                        // TODO Auto-generated method stub
+                        throw new UnsupportedOperationException(
+                                "Unimplemented method 'stringValue'");
+                    }
                 };
-        System.out.println(expr);
-        System.out.println(expr.value(env));
+        // System.out.println(expr);
+        // System.out.println(expr.value(env));
     }
 }

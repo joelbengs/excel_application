@@ -19,6 +19,8 @@ public class ExprFactory implements CellFactory {
             return exprParser.build(contents);
         } catch (IOException e) {
             throw new XLException("Could not read input");
+        } catch (XLException e) {
+            throw new XLException("Grammar issue in input");
         }
     }
 }

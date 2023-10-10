@@ -7,7 +7,6 @@ public class Coordinate implements Comparable<Coordinate> {
     public Coordinate(String name) {
         this.row = getRow(name);
         this.col = getCol(name);
-        System.out.println("This row is " + this.row + " and this col is " + this.col);
     }
 
     private static int getRow(String name) {

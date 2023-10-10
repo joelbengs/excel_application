@@ -14,6 +14,14 @@ public interface Environment {
     public Optional<Double> value(Coordinate coordinate);
 
     /**
+     * Returns the string representation of the cell at the specified coordinate.
+     *
+     * @param coordinate the coordinate to get the string representation of
+     * @return the string representation of the cell at the specified coordinate
+     */
+    public Optional<String> stringValue(Coordinate coordinate);
+
+    /**
      * Tries to add a cell to the sheet at the specified coordinate. If the cell contains a circular
      * reference, the sheet is not modified.
      *
@@ -21,7 +29,7 @@ public interface Environment {
      * @param cell the cell to add
      * @throws XLException if the cell has a circular reference
      */
-    public void addToSheet(Coordinate coordinate, Cell cell);
+    public void addToSheet(Coordinate coordinate, String inputString);
 
     public Map<Coordinate, Cell> getRepository();
 }
