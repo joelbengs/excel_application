@@ -41,7 +41,7 @@ public class TestExpr {
                                 "Unimplemented method 'getRepository'");
                     }
                 };
-        System.out.println(expr);
-        System.out.println(expr.value(env));
+        // System.out.println(expr);
+        // System.out.println(expr.value(env));
     }
 }

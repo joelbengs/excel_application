@@ -43,7 +43,7 @@ public class XL extends JFrame {
 
         sheet.addObserver(sheetPanel);
 
-        sheet.addToSheet(new Coordinate("A1"), "10");
+        sheet.addToSheet(new Coordinate("A1"), "11");
 
         Editor editor = new Editor();
         add(NORTH, statusPanel);

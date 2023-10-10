@@ -54,8 +54,29 @@ public class Sheet extends Observable implements Environment {
         this.notifyObservers();
     }
 
+    // Returns a copy of the repository
     @Override
     public Map<Coordinate, Cell> getRepository() {
-        return repository;
+        return this.repository;
+    }
+
+    public InputParser getInputParser() {
+        return this.parser;
+    }
+
+    public String getStringAtCoordinate(Coordinate coordinate) {
+        return repository.get(coordinate).toString();
+    }
+
+    public double getValueAtCoordinate(Coordinate coordinate) {
+        return repository.get(coordinate).value(this);
+    }
+
+    public void externalNotify() {
+        this.setChanged();
+        this.notifyObservers();
+        for (Map.Entry<Coordinate, Cell> m : this.repository.entrySet()) {
+            System.out.println("Coordinate: " + m.getKey() + " Cell: " + m.getValue());
+        }
     }
 }
