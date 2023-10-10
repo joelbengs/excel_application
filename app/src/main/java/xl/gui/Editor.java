@@ -2,41 +2,43 @@ package xl.gui;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
-
 import javax.swing.JTextField;
-
 import xl.expr.Coordinate;
 import xl.expr.Environment;
+import xl.util.XLException;
 
+@SuppressWarnings("deprecation")
 public class Editor extends JTextField implements Observer {
     private Environment sheet;
     private SelectedCell selectedCell;
+    private StatusLabel statusLabel;
 
-    public Editor(Environment sheet, SelectedCell selectedCell) {
+    public Editor(Environment sheet, SelectedCell selectedCell, StatusLabel statusLabel) {
         setBackground(Color.WHITE);
-        addActionListener(new EnterActionListener());
+        this.statusLabel = statusLabel;
+        addActionListener(
+                (ActionEvent e) -> {
+                    String text = getText();
+                    if (!text.isEmpty()) {
+                        try {
+                            sheet.addToSheet(selectedCell.getSelectedCoordinate(), text);
+                        } catch (XLException exception) {
+                            this.statusLabel.setText(exception.getMessage());
+                        }
+                    }
+                });
         this.sheet = sheet;
         this.selectedCell = selectedCell;
         selectedCell.addObserver(this);
     }
 
-    private class EnterActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String text = getText();
-            if (!text.isEmpty()) {
-                sheet.addToSheet(selectedCell.getSelectedCoordinate(), text);
-            }
-        }
-    }
-
     @Override
     public void update(Observable o, Object arg) {
         Coordinate selectedCoordinate = this.selectedCell.getSelectedCoordinate();
-        this.setText(sheet.stringValue(selectedCoordinate));
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        // The value from the model is Optional<String>. Empty string is default
+        String value = sheet.stringValue(selectedCoordinate).orElse("");
+        this.setText(value);
     }
 }

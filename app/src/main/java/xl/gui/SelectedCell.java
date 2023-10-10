@@ -5,7 +5,7 @@ import xl.expr.Coordinate;
 
 @SuppressWarnings("deprecation")
 public class SelectedCell extends Observable {
-    
+
     private Coordinate selectedCell;
 
     public SelectedCell() {

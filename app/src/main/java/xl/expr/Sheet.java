@@ -19,12 +19,21 @@ public class Sheet extends Observable implements Environment {
 
     @Override
     public Optional<Double> value(Coordinate coordinate) {
-        return Optional.ofNullable(this.repository.get(coordinate).value(this));
+        // map does: Optional<Cell> -> Optional<Double>
+        return Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.value(this));
     }
 
+    // For the editor, always strings
     @Override
     public Optional<String> stringValue(Coordinate coordinate) {
-        return Optional.ofNullable(this.repository.get(coordinate).toString());
+        return Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.toString());
+    }
+
+    // For the slot labels, the return type can contain both comment or double
+    public Optional<String> gridContent(Coordinate coordinate) {
+        //Figure out if comment. If so, return comment as string. Cell instanceoff comment?
+        //If not comment, then return double value parsed as a string. Slotlabels will have to do unparsing.
+        return Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.toString());
     }
 
     @Override
@@ -73,5 +82,4 @@ public class Sheet extends Observable implements Environment {
             System.out.println("Coordinate: " + m.getKey() + " Cell: " + m.getValue());
         }
     }
-
 }
