@@ -5,17 +5,18 @@ import xl.expr.Coordinate;
 
 @SuppressWarnings("deprecation")
 public class SelectedCell extends Observable {
+    
     private Coordinate selectedCell;
 
     public SelectedCell() {
         selectedCell = new Coordinate("A1");
     }
 
-    public Coordinate getSelectedCell() {
+    public Coordinate getSelectedCoordinate() {
         return selectedCell;
     }
 
-    public void setSelectedCell(Coordinate coordinate) {
+    public void setSelectedCoordinate(Coordinate coordinate) {
         selectedCell = coordinate;
         setChanged();
         notifyObservers();

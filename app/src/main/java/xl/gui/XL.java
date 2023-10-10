@@ -37,7 +37,6 @@ public class XL extends JFrame {
 
         // this is a part of the model
         SelectedCell selectedCell = new SelectedCell();
-
         JPanel statusPanel = new StatusPanel(statusLabel, selectedCell);
         SheetPanel sheetPanel = new SheetPanel(ROWS, COLUMNS, sheet);
 
@@ -45,7 +44,7 @@ public class XL extends JFrame {
 
         sheet.addToSheet(new Coordinate("A1"), "11");
 
-        Editor editor = new Editor();
+        Editor editor = new Editor(sheet, selectedCell);
         add(NORTH, statusPanel);
         add(CENTER, editor);
         add(SOUTH, sheetPanel);

@@ -19,10 +19,12 @@ public class Sheet extends Observable implements Environment {
 
     @Override
     public Optional<Double> value(Coordinate coordinate) {
-        if (!this.repository.containsKey(coordinate)) {
-            return Optional.empty();
-        }
-        return Optional.of(this.repository.get(coordinate).value(this));
+        return Optional.ofNullable(this.repository.get(coordinate).value(this));
+    }
+
+    @Override
+    public Optional<String> stringValue(Coordinate coordinate) {
+        return Optional.ofNullable(this.repository.get(coordinate).toString());
     }
 
     @Override
@@ -64,14 +66,6 @@ public class Sheet extends Observable implements Environment {
         return this.parser;
     }
 
-    public String getStringAtCoordinate(Coordinate coordinate) {
-        return repository.get(coordinate).toString();
-    }
-
-    public double getValueAtCoordinate(Coordinate coordinate) {
-        return repository.get(coordinate).value(this);
-    }
-
     public void externalNotify() {
         this.setChanged();
         this.notifyObservers();
@@ -79,4 +73,5 @@ public class Sheet extends Observable implements Environment {
             System.out.println("Coordinate: " + m.getKey() + " Cell: " + m.getValue());
         }
     }
+
 }
