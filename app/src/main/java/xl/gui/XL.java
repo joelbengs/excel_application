@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import xl.expr.Coordinate;
 import xl.expr.Sheet;
-import xl.expr.factories.InputParser;
 import xl.gui.menu.XLMenuBar;
 
 public class XL extends JFrame {
@@ -18,7 +17,6 @@ public class XL extends JFrame {
     private StatusLabel statusLabel = new StatusLabel();
     private XLList xlList;
     private Sheet sheet;
-    private InputParser parser;
 
     // Constructure used by NewMenuItem.java when creating a new instance of the
     // application from the menu bar, for the purpose of using
@@ -36,7 +34,6 @@ public class XL extends JFrame {
         counter.increment();
 
         this.sheet = new Sheet();
-        this.parser = new InputParser();
 
         // this is a part of the model
         SelectedCell selectedCell = new SelectedCell();
@@ -46,7 +43,7 @@ public class XL extends JFrame {
 
         sheet.addObserver(sheetPanel);
 
-        sheet.addToSheet(new Coordinate("A1"), parser.parse("10"));
+        sheet.addToSheet(new Coordinate("A1"), "10");
 
         Editor editor = new Editor();
         add(NORTH, statusPanel);
@@ -67,10 +64,6 @@ public class XL extends JFrame {
 
     public Sheet getSheet() {
         return this.sheet;
-    }
-
-    public InputParser getInputParser() {
-        return this.parser;
     }
 
     public static void main(String[] args) {

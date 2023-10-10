@@ -30,7 +30,7 @@ public class TestExpr {
                     }
 
                     @Override
-                    public void addToSheet(Coordinate coordinate, Cell cell) {
+                    public void addToSheet(Coordinate coordinate, String input) {
                         // do nothing
                     }
 

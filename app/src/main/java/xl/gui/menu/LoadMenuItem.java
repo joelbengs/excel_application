@@ -27,9 +27,7 @@ class LoadMenuItem extends OpenMenuItem {
             String[] parts = equation.split("=");
             String key = parts[0];
             String value = parts[1];
-            this.xl
-                    .getSheet()
-                    .addToSheet(new Coordinate(key), this.xl.getInputParser().parse(value));
+            this.xl.getSheet().addToSheet(new Coordinate(key), value);
         }
 
         reader.close();

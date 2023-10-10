@@ -21,7 +21,7 @@ public interface Environment {
      * @param cell the cell to add
      * @throws XLException if the cell has a circular reference
      */
-    public void addToSheet(Coordinate coordinate, Cell cell);
+    public void addToSheet(Coordinate coordinate, String inputString);
 
     public Map<Coordinate, Cell> getRepository();
 }
