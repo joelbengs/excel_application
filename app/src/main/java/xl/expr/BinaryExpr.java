@@ -32,7 +32,8 @@ abstract class BinaryExpr extends Expr {
     }
 
     public String gridString(Environment env) {
-        return Double.toString(this.value(env));
+        var ret = new Num(this.value(env));
+        return ret.toString(1);
     }
 
     public double value(Environment env) {
