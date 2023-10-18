@@ -27,6 +27,8 @@ public class Editor extends JTextField implements Observer {
                         } catch (XLException exception) {
                             this.statusLabel.setText(exception.getMessage());
                         }
+                    } else {
+                        sheet.clearCell(selectedCell.getSelectedCoordinate());
                     }
                 });
         this.sheet = sheet;
@@ -40,5 +42,6 @@ public class Editor extends JTextField implements Observer {
         // The value from the model is Optional<String>. Empty string is default
         String value = sheet.stringValue(selectedCoordinate).orElse("");
         this.setText(value);
+        this.statusLabel.setText("");
     }
 }

@@ -6,7 +6,7 @@ import static java.awt.BorderLayout.SOUTH;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import xl.expr.Coordinate;
+import xl.expr.Environment;
 import xl.expr.Sheet;
 import xl.gui.menu.XLMenuBar;
 
@@ -16,42 +16,34 @@ public class XL extends JFrame {
     private XLCounter counter;
     private StatusLabel statusLabel = new StatusLabel();
     private XLList xlList;
-    private Sheet sheet;
+    private Environment sheet;
 
-    // Constructure used by NewMenuItem.java when creating a new instance of the
+    // Constructor used by NewMenuItem.java when creating a new instance of the
     // application from the menu bar, for the purpose of using
     // the global list and the global counter for all applications
     public XL(XL oldXL) {
         this(oldXL.xlList, oldXL.counter);
     }
 
-    @SuppressWarnings("deprecation")
     public XL(XLList xlList, XLCounter counter) {
         super("Untitled-" + counter);
         this.xlList = xlList;
         this.counter = counter;
         xlList.add(this);
         counter.increment();
-
         this.sheet = new Sheet();
-
-        // this is a part of the model
         SelectedCell selectedCell = new SelectedCell();
         JPanel statusPanel = new StatusPanel(statusLabel, selectedCell);
         SheetPanel sheetPanel = new SheetPanel(ROWS, COLUMNS, sheet, selectedCell);
-
-        sheet.addObserver(sheetPanel);
-
-        sheet.addToSheet(new Coordinate("A1"), "11");
-
         Editor editor = new Editor(sheet, selectedCell, statusLabel);
+        setJMenuBar(new XLMenuBar(this, xlList, statusLabel, selectedCell));
+        this.sheet.addObserver(sheetPanel);
         add(NORTH, statusPanel);
         add(CENTER, editor);
         add(SOUTH, sheetPanel);
-        setJMenuBar(new XLMenuBar(this, xlList, statusLabel));
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         setVisible(true);
     }
 
@@ -61,7 +53,7 @@ public class XL extends JFrame {
         xlList.setChanged();
     }
 
-    public Sheet getSheet() {
+    public Environment getSheet() {
         return this.sheet;
     }
 

@@ -14,6 +14,10 @@ class Variable extends Expr {
         return coordinate.toString();
     }
 
+    public String gridString(Environment env) {
+        return String.valueOf(value(env));
+    }
+
     public double value(Environment env) {
         var value = env.value(coordinate);
         if (value.isEmpty()) throw new XLException("Variable " + coordinate + " is undefined");

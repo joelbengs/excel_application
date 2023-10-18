@@ -5,6 +5,7 @@ import java.util.Observable;
 import java.util.Optional;
 import java.util.TreeMap;
 import xl.expr.factories.InputParser;
+import xl.gui.SheetPanel;
 import xl.util.XLException;
 
 @SuppressWarnings("deprecation")
@@ -19,7 +20,6 @@ public class Sheet extends Observable implements Environment {
 
     @Override
     public Optional<Double> value(Coordinate coordinate) {
-        // map does: Optional<Cell> -> Optional<Double>
         return Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.value(this));
     }
 
@@ -30,38 +30,55 @@ public class Sheet extends Observable implements Environment {
     }
 
     // For the slot labels, the return type can contain both comment or double
+    @Override
     public Optional<String> gridContent(Coordinate coordinate) {
-        Optional<Double> val =
-                Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.value(this));
-        if (val.isPresent() && val.get() == 0) {
-            Optional<String> str =
-                    Optional.ofNullable(this.repository.get(coordinate))
-                            .map(cell -> cell.toString());
-            if (str.isPresent() && str.get().charAt(0) == '#') {
-                return str;
-            }
-        }
-        return val.map(cell -> cell.toString());
+        return Optional.ofNullable(this.repository.get(coordinate))
+                .map(cell -> cell.gridString(this));
     }
 
     @Override
     public void addToSheet(Coordinate coordinate, String input) {
         Cell newCell = parser.parse(input);
         Cell previousWorking = this.repository.get(coordinate);
-        Bomb bomb = new Bomb();
-        this.repository.put(coordinate, bomb);
+
         try {
-            // this will throw if there is a circular reference
-            // we do not need to save the result,
-            // we're just calling it to see if it throws
+            /* DETECT CIRCULAR REFERENCES */
+            // temporarily replace the new cell by a bomb,
+            // which throws when evaluated.
+            // this detects circular references
+            Bomb bomb = new Bomb();
+            this.repository.put(coordinate, bomb);
+            // We do not need to save the result, we're just calling it to see if it throws.
             newCell.value(this);
+
+            /* DETECT OTHER EXCEPTIONS */
+            // for each cell in the sheet, check if it throws when
+            // this cell is added
+            // for example, division by zero
+
+            // put the cell in the sheet
+            this.repository.put(coordinate, newCell);
+            // check if any cell in the sheet throws when this
+            // new cell has been added
+            for (Cell cell : this.repository.values()) {
+                cell.value(this);
+            }
+
         } catch (XLException e) {
+            System.out.println("We have an exception: " + e.getMessage());
             // put back what worked before
             // (if there was something there before)
-            if (previousWorking != null) {
+            // otherwise just remove the bomb
+            if (previousWorking == null) {
+                System.out.println("Removing the current cell");
+                this.repository.remove(coordinate);
+            } else {
+                System.out.println(
+                        "Removing the current cell and putting back " + previousWorking.toString());
                 this.repository.put(coordinate, previousWorking);
             }
 
+            // rethrow the exception
             throw e;
         }
         // if no exception was thrown, we can put the cell in the sheet
@@ -73,21 +90,38 @@ public class Sheet extends Observable implements Environment {
         this.notifyObservers();
     }
 
-    // Returns a copy of the repository
+    @Override
+    public void clearCell(Coordinate coordinate) {
+        this.repository.remove(coordinate);
+        this.setChanged();
+        this.notifyObservers();
+    }
+
+    @Override
+    public void clearAllCells() {
+        this.repository.clear();
+        this.setChanged();
+        this.notifyObservers();
+    }
+
     @Override
     public Map<Coordinate, Cell> getRepository() {
         return this.repository;
     }
 
+    @Override
     public InputParser getInputParser() {
         return this.parser;
     }
 
+    @Override
     public void externalNotify() {
         this.setChanged();
         this.notifyObservers();
-        for (Map.Entry<Coordinate, Cell> m : this.repository.entrySet()) {
-            System.out.println("Coordinate: " + m.getKey() + " Cell: " + m.getValue());
-        }
+    }
+
+    @Override
+    public void addObserver(SheetPanel sheetPanel) {
+        super.addObserver(sheetPanel);
     }
 }

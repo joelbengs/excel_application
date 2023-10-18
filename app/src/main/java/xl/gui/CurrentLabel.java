@@ -17,7 +17,6 @@ public class CurrentLabel extends ColoredLabel implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println("Something has updated");
         this.setText(this.selectedCell.toString());
     }
 }
