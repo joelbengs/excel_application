@@ -47,6 +47,13 @@ public class TestExpr {
                         throw new UnsupportedOperationException(
                                 "Unimplemented method 'stringValue'");
                     }
+
+                    @Override
+                    public Optional<String> gridContent(Coordinate coordinate) {
+                        // TODO Auto-generated method stub
+                        throw new UnsupportedOperationException(
+                                "Unimplemented method 'gridContent'");
+                    }
                 };
         // System.out.println(expr);
         // System.out.println(expr.value(env));

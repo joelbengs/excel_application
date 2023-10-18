@@ -22,6 +22,15 @@ public interface Environment {
     public Optional<String> stringValue(Coordinate coordinate);
 
     /**
+     * Returns the string representation of the cell at the specified coordinate, but with value of
+     * expressions instead of expression strings
+     *
+     * @param coordinate
+     * @return
+     */
+    public Optional<String> gridContent(Coordinate coordinate);
+
+    /**
      * Tries to add a cell to the sheet at the specified coordinate. If the cell contains a circular
      * reference, the sheet is not modified.
      *

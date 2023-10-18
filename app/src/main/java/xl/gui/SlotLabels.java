@@ -28,9 +28,6 @@ public class SlotLabels extends GridPanel {
                 SlotLabel label = new SlotLabel(coordinate);
                 add(label);
                 labelList.add(label);
-                // label.addAncestorListener(e -> {
-                // System.out.print("h");
-                // });
 
                 label.addMouseListener(
                         new MouseAdapter() {
@@ -49,12 +46,18 @@ public class SlotLabels extends GridPanel {
     public void update(Environment env) {
         for (SlotLabel slotLabel : labelList) {
             var coordinate = slotLabel.getCoordinate();
-            var value = env.value(coordinate);
-            if (value.isPresent()) {
-                slotLabel.setText(String.valueOf(value.get()));
+            // var value = env.value(coordinate);
+            var gridString = env.gridContent(coordinate);
+            // if (value.isPresent()) {
+            /* if (gridString.isPresent()) {
+                // slotLabel.setText(String.valueOf(value.get()));
+                slotLabel.setText(gridString.get());
             } else {
                 slotLabel.setText("          ");
-            }
+            } */
+            StringBuilder sb = new StringBuilder(gridString.orElse("            "));
+            sb.deleteCharAt(0);
+            slotLabel.setText(sb.toString());
 
             if (selectedCell.getSelectedCoordinate().equals(coordinate)) {
                 slotLabel.setBackground(Color.YELLOW);

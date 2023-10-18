@@ -23,7 +23,7 @@ public class Sheet extends Observable implements Environment {
         return Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.value(this));
     }
 
-    // For the editor, always strings
+    // For the editor, always return gridcontent as String
     @Override
     public Optional<String> stringValue(Coordinate coordinate) {
         return Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.toString());
@@ -31,9 +31,17 @@ public class Sheet extends Observable implements Environment {
 
     // For the slot labels, the return type can contain both comment or double
     public Optional<String> gridContent(Coordinate coordinate) {
-        //Figure out if comment. If so, return comment as string. Cell instanceoff comment?
-        //If not comment, then return double value parsed as a string. Slotlabels will have to do unparsing.
-        return Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.toString());
+        Optional<Double> val =
+                Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.value(this));
+        if (val.isPresent() && val.get() == 0) {
+            Optional<String> str =
+                    Optional.ofNullable(this.repository.get(coordinate))
+                            .map(cell -> cell.toString());
+            if (str.isPresent() && str.get().charAt(0) == '#') {
+                return str;
+            }
+        }
+        return val.map(cell -> cell.toString());
     }
 
     @Override
