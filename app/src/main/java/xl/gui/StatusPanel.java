@@ -3,9 +3,7 @@ package xl.gui;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.WEST;
 
-import java.util.Observer;
-
-public class StatusPanel extends BorderPanel /* implements Observer */{
+public class StatusPanel extends BorderPanel /* implements Observer */ {
 
     protected StatusPanel(StatusLabel statusLabel, SelectedCell selectedCell) {
         add(WEST, new CurrentLabel(selectedCell));
@@ -13,5 +11,5 @@ public class StatusPanel extends BorderPanel /* implements Observer */{
         /* selectedCell.addObserver(this); */
     }
 
-    //public void update(Observer o, )
+    // public void update(Observer o, )
 }

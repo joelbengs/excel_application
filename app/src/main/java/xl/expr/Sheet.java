@@ -40,19 +40,41 @@ public class Sheet extends Observable implements Environment {
     public void addToSheet(Coordinate coordinate, String input) {
         Cell newCell = parser.parse(input);
         Cell previousWorking = this.repository.get(coordinate);
-        Bomb bomb = new Bomb();
-        this.repository.put(coordinate, bomb);
+
         try {
-            // This will throw if there is a circular reference or a division by zero.
+            /* DETECT CIRCULAR REFERENCES */
+            // temporarily replace the new cell by a bomb,
+            // which throws when evaluated.
+            // this detects circular references
+            Bomb bomb = new Bomb();
+            this.repository.put(coordinate, bomb);
             // We do not need to save the result, we're just calling it to see if it throws.
             newCell.value(this);
+
+            /* DETECT OTHER EXCEPTIONS */
+            // for each cell in the sheet, check if it throws when
+            // this cell is added
+            // for example, division by zero
+
+            // put the cell in the sheet
+            this.repository.put(coordinate, newCell);
+            // check if any cell in the sheet throws when this
+            // new cell has been added
+            for (Cell cell : this.repository.values()) {
+                cell.value(this);
+            }
+
         } catch (XLException e) {
+            System.out.println("We have an exception: " + e.getMessage());
             // put back what worked before
             // (if there was something there before)
             // otherwise just remove the bomb
             if (previousWorking == null) {
+                System.out.println("Removing the current cell");
                 this.repository.remove(coordinate);
             } else {
+                System.out.println(
+                        "Removing the current cell and putting back " + previousWorking.toString());
                 this.repository.put(coordinate, previousWorking);
             }
 

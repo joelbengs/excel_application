@@ -44,7 +44,7 @@ public class SlotLabels extends GridPanel {
     }
 
     public void update(Environment env) {
-        
+
         for (SlotLabel slotLabel : labelList) {
             var coordinate = slotLabel.getCoordinate();
             // var value = env.value(coordinate);

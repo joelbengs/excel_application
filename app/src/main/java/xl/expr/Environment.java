@@ -49,29 +49,21 @@ public interface Environment {
      */
     void clearCell(Coordinate coordinate);
 
-    /**
-     * Clears all cells in the sheet.
-     */
+    /** Clears all cells in the sheet. */
     void clearAllCells();
 
-    /**
-     * Returns the repository of the environment.
-     */
+    /** Returns the repository of the environment. */
     Map<Coordinate, Cell> getRepository();
 
-    /**
-     * Notify all observers that the environment has been modified.
-     */
+    /** Notify all observers that the environment has been modified. */
     void externalNotify();
 
-    /**
-     * Returns the input parser that the environment uses to parse input strings.
-     */
+    /** Returns the input parser that the environment uses to parse input strings. */
     InputParser getInputParser();
 
     /**
-     * Adds an observer to the environment.
-     * Enables the observer to be notified when this environment has been modified.
+     * Adds an observer to the environment. Enables the observer to be notified when this
+     * environment has been modified.
      */
     void addObserver(SheetPanel sheetPanel);
 }

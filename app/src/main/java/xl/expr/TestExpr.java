@@ -87,7 +87,8 @@ public class TestExpr {
                     @Override
                     public void addObserver(SheetPanel sheetPanel) {
                         // TODO Auto-generated method stub
-                        throw new UnsupportedOperationException("Unimplemented method 'addObserver'");
+                        throw new UnsupportedOperationException(
+                                "Unimplemented method 'addObserver'");
                     }
                 };
         // System.out.println(expr);
