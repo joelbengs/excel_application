@@ -56,7 +56,7 @@ public class SlotLabels extends GridPanel {
                 slotLabel.setText("          ");
             } */
             StringBuilder sb = new StringBuilder(gridString.orElse("            "));
-            sb.deleteCharAt(0);
+            // sb.deleteCharAt(0);
             slotLabel.setText(sb.toString());
 
             if (selectedCell.getSelectedCoordinate().equals(coordinate)) {

@@ -19,7 +19,6 @@ public class Sheet extends Observable implements Environment {
 
     @Override
     public Optional<Double> value(Coordinate coordinate) {
-        // map does: Optional<Cell> -> Optional<Double>
         return Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.value(this));
     }
 
@@ -31,17 +30,8 @@ public class Sheet extends Observable implements Environment {
 
     // For the slot labels, the return type can contain both comment or double
     public Optional<String> gridContent(Coordinate coordinate) {
-        Optional<Double> val =
-                Optional.ofNullable(this.repository.get(coordinate)).map(cell -> cell.value(this));
-        if (val.isPresent() && val.get() == 0) {
-            Optional<String> str =
-                    Optional.ofNullable(this.repository.get(coordinate))
-                            .map(cell -> cell.toString());
-            if (str.isPresent() && str.get().charAt(0) == '#') {
-                return str;
-            }
-        }
-        return val.map(cell -> cell.toString());
+        return Optional.ofNullable(this.repository.get(coordinate))
+                .map(cell -> cell.gridString(this));
     }
 
     @Override
@@ -51,17 +41,20 @@ public class Sheet extends Observable implements Environment {
         Bomb bomb = new Bomb();
         this.repository.put(coordinate, bomb);
         try {
-            // this will throw if there is a circular reference
-            // we do not need to save the result,
-            // we're just calling it to see if it throws
+            // This will throw if there is a circular reference or a division by zero.
+            // We do not need to save the result, we're just calling it to see if it throws.
             newCell.value(this);
         } catch (XLException e) {
             // put back what worked before
             // (if there was something there before)
-            if (previousWorking != null) {
+            // otherwise just remove the bomb
+            if (previousWorking == null) {
+                this.repository.remove(coordinate);
+            } else {
                 this.repository.put(coordinate, previousWorking);
             }
 
+            // rethrow the exception
             throw e;
         }
         // if no exception was thrown, we can put the cell in the sheet
@@ -73,7 +66,12 @@ public class Sheet extends Observable implements Environment {
         this.notifyObservers();
     }
 
-    // Returns a copy of the repository
+    public void removeCell(Coordinate coordinate) {
+        this.repository.remove(coordinate);
+        this.setChanged();
+        this.notifyObservers();
+    }
+
     @Override
     public Map<Coordinate, Cell> getRepository() {
         return this.repository;

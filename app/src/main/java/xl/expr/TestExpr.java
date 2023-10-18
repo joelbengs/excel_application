@@ -54,6 +54,13 @@ public class TestExpr {
                         throw new UnsupportedOperationException(
                                 "Unimplemented method 'gridContent'");
                     }
+
+                    @Override
+                    public void removeCell(Coordinate coordinate) {
+                        // TODO Auto-generated method stub
+                        throw new UnsupportedOperationException(
+                                "Unimplemented method 'removeCell'");
+                    }
                 };
         // System.out.println(expr);
         // System.out.println(expr.value(env));

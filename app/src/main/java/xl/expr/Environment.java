@@ -40,5 +40,7 @@ public interface Environment {
      */
     public void addToSheet(Coordinate coordinate, String inputString);
 
+    public void removeCell(Coordinate coordinate);
+
     public Map<Coordinate, Cell> getRepository();
 }

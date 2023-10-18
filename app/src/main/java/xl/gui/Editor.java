@@ -27,6 +27,8 @@ public class Editor extends JTextField implements Observer {
                         } catch (XLException exception) {
                             this.statusLabel.setText(exception.getMessage());
                         }
+                    } else {
+                        sheet.removeCell(selectedCell.getSelectedCoordinate());
                     }
                 });
         this.sheet = sheet;

@@ -4,14 +4,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 
-class ClearMenuItem extends JMenuItem implements ActionListener {
+import xl.gui.XL;
 
-    public ClearMenuItem() {
+class ClearMenuItem extends JMenuItem implements ActionListener {
+    private XL xl;
+
+    public ClearMenuItem(XL xl) {
         super("Clear");
+        this.xl = xl;
         addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent e) {
-        // TODO
+       // this.xl.getSheet().removeCell(this.xl.selectedCell.getSelectedCoordinate());
     }
 }

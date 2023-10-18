@@ -31,6 +31,10 @@ abstract class BinaryExpr extends Expr {
         return builder.toString();
     }
 
+    public String gridString(Environment env) {
+        return Double.toString(this.value(env));
+    }
+
     public double value(Environment env) {
         return op(expr1.value(env), expr2.value(env));
     }

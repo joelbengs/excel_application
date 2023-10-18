@@ -15,6 +15,10 @@ class Num extends Expr {
         return adjustment.right(value);
     }
 
+    public String gridString(Environment env) {
+        return toString();
+    }
+
     public double value(Environment env) {
         return value;
     }
