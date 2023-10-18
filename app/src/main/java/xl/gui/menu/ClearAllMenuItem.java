@@ -3,7 +3,6 @@ package xl.gui.menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
-
 import xl.gui.XL;
 
 class ClearAllMenuItem extends JMenuItem implements ActionListener {
@@ -16,6 +15,6 @@ class ClearAllMenuItem extends JMenuItem implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        // TODO
+        this.xl.getSheet().clearAllCells();
     }
 }

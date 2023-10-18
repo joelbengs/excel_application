@@ -6,6 +6,7 @@ import static java.awt.BorderLayout.SOUTH;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import xl.expr.Environment;
 import xl.expr.Sheet;
 import xl.gui.menu.XLMenuBar;
 
@@ -15,7 +16,7 @@ public class XL extends JFrame {
     private XLCounter counter;
     private StatusLabel statusLabel = new StatusLabel();
     private XLList xlList;
-    private Sheet sheet;
+    private Environment sheet;
 
     // Constructor used by NewMenuItem.java when creating a new instance of the
     // application from the menu bar, for the purpose of using
@@ -24,7 +25,6 @@ public class XL extends JFrame {
         this(oldXL.xlList, oldXL.counter);
     }
 
-    @SuppressWarnings("deprecation")
     public XL(XLList xlList, XLCounter counter) {
         super("Untitled-" + counter);
         this.xlList = xlList;
@@ -36,8 +36,8 @@ public class XL extends JFrame {
         JPanel statusPanel = new StatusPanel(statusLabel, selectedCell);
         SheetPanel sheetPanel = new SheetPanel(ROWS, COLUMNS, sheet, selectedCell);
         Editor editor = new Editor(sheet, selectedCell, statusLabel);
-        setJMenuBar(new XLMenuBar(this, xlList, statusLabel));
-        sheet.addObserver(sheetPanel);
+        setJMenuBar(new XLMenuBar(this, xlList, statusLabel, selectedCell));
+        this.sheet.addObserver(sheetPanel);
         add(NORTH, statusPanel);
         add(CENTER, editor);
         add(SOUTH, sheetPanel);
@@ -53,7 +53,7 @@ public class XL extends JFrame {
         xlList.setChanged();
     }
 
-    public Sheet getSheet() {
+    public Environment getSheet() {
         return this.sheet;
     }
 

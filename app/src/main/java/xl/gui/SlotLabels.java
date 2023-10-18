@@ -44,6 +44,7 @@ public class SlotLabels extends GridPanel {
     }
 
     public void update(Environment env) {
+        
         for (SlotLabel slotLabel : labelList) {
             var coordinate = slotLabel.getCoordinate();
             // var value = env.value(coordinate);
@@ -55,9 +56,7 @@ public class SlotLabels extends GridPanel {
             } else {
                 slotLabel.setText("          ");
             } */
-            StringBuilder sb = new StringBuilder(gridString.orElse("            "));
-            // sb.deleteCharAt(0);
-            slotLabel.setText(sb.toString());
+            slotLabel.setText(gridString.orElse("            "));
 
             if (selectedCell.getSelectedCoordinate().equals(coordinate)) {
                 slotLabel.setBackground(Color.YELLOW);

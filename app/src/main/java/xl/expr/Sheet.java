@@ -5,6 +5,7 @@ import java.util.Observable;
 import java.util.Optional;
 import java.util.TreeMap;
 import xl.expr.factories.InputParser;
+import xl.gui.SheetPanel;
 import xl.util.XLException;
 
 @SuppressWarnings("deprecation")
@@ -29,6 +30,7 @@ public class Sheet extends Observable implements Environment {
     }
 
     // For the slot labels, the return type can contain both comment or double
+    @Override
     public Optional<String> gridContent(Coordinate coordinate) {
         return Optional.ofNullable(this.repository.get(coordinate))
                 .map(cell -> cell.gridString(this));
@@ -66,8 +68,16 @@ public class Sheet extends Observable implements Environment {
         this.notifyObservers();
     }
 
-    public void removeCell(Coordinate coordinate) {
+    @Override
+    public void clearCell(Coordinate coordinate) {
         this.repository.remove(coordinate);
+        this.setChanged();
+        this.notifyObservers();
+    }
+
+    @Override
+    public void clearAllCells() {
+        this.repository.clear();
         this.setChanged();
         this.notifyObservers();
     }
@@ -77,15 +87,22 @@ public class Sheet extends Observable implements Environment {
         return this.repository;
     }
 
+    @Override
     public InputParser getInputParser() {
         return this.parser;
     }
 
+    @Override
     public void externalNotify() {
         this.setChanged();
         this.notifyObservers();
         for (Map.Entry<Coordinate, Cell> m : this.repository.entrySet()) {
             System.out.println("Coordinate: " + m.getKey() + " Cell: " + m.getValue());
         }
+    }
+
+    @Override
+    public void addObserver(SheetPanel sheetPanel) {
+        super.addObserver(sheetPanel);
     }
 }

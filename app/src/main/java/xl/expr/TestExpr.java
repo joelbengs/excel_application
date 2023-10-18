@@ -3,6 +3,7 @@ package xl.expr;
 import java.util.Map;
 import java.util.Optional;
 import xl.expr.factories.InputParser;
+import xl.gui.SheetPanel;
 
 public class TestExpr {
 
@@ -56,10 +57,37 @@ public class TestExpr {
                     }
 
                     @Override
-                    public void removeCell(Coordinate coordinate) {
+                    public void clearCell(Coordinate coordinate) {
                         // TODO Auto-generated method stub
                         throw new UnsupportedOperationException(
                                 "Unimplemented method 'removeCell'");
+                    }
+
+                    @Override
+                    public void clearAllCells() {
+                        // TODO Auto-generated method stub
+                        throw new UnsupportedOperationException(
+                                "Unimplemented method 'clearAllCells'");
+                    }
+
+                    @Override
+                    public void externalNotify() {
+                        // TODO Auto-generated method stub
+                        throw new UnsupportedOperationException(
+                                "Unimplemented method 'externalNotify'");
+                    }
+
+                    @Override
+                    public InputParser getInputParser() {
+                        // TODO Auto-generated method stub
+                        throw new UnsupportedOperationException(
+                                "Unimplemented method 'getInputParser'");
+                    }
+
+                    @Override
+                    public void addObserver(SheetPanel sheetPanel) {
+                        // TODO Auto-generated method stub
+                        throw new UnsupportedOperationException("Unimplemented method 'addObserver'");
                     }
                 };
         // System.out.println(expr);
