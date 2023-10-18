@@ -3,6 +3,7 @@ package xl.expr;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import xl.expr.factories.InputParser;
 import xl.gui.SheetPanel;
@@ -92,7 +93,20 @@ public class Sheet extends Observable implements Environment {
 
     @Override
     public void clearCell(Coordinate coordinate) {
-        this.repository.remove(coordinate);
+        Cell previousWorking = this.repository.get(coordinate);
+        try {
+            this.repository.remove(coordinate);
+            for (Cell cell : this.repository.values()) {
+                cell.value(this);
+            }
+        } catch (XLException e) {
+            System.out.println("We have an exception: " + e.getMessage());
+            if (previousWorking != null) {
+                System.out.println("Putting back " + previousWorking.toString());
+                this.repository.put(coordinate, previousWorking);
+            }
+            throw e;
+        }
         this.setChanged();
         this.notifyObservers();
     }
@@ -105,13 +119,31 @@ public class Sheet extends Observable implements Environment {
     }
 
     @Override
-    public Map<Coordinate, Cell> getRepository() {
-        return this.repository;
+    public void loadToSheet(String key, String input) {
+        Coordinate coordinate = new Coordinate(key);
+        Cell cell = parser.parse(input);
+        this.repository.put(coordinate, cell);
+    }
+
+    public void checkValidity() {
+        try {
+            for (Cell cell : this.repository.values()) {
+                cell.value(this);
+            }
+        } catch (XLException exception) {
+            System.out.println("We have an exception: " + exception.getMessage());
+            repository.clear();
+            throw exception;
+        }
     }
 
     @Override
-    public InputParser getInputParser() {
-        return this.parser;
+    public Set<Map.Entry<String, String>> getEntrySet() {
+        var map = new TreeMap<String, String>();
+        for (Coordinate key : this.repository.keySet()){
+            map.put(key.toString(), repository.get(key).toString());
+        }
+        return map.entrySet();
     }
 
     @Override
@@ -125,3 +157,6 @@ public class Sheet extends Observable implements Environment {
         super.addObserver(sheetPanel);
     }
 }
+
+
+

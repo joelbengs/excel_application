@@ -2,8 +2,11 @@ package xl.expr;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
 import xl.expr.factories.InputParser;
 import xl.gui.SheetPanel;
+import xl.util.XLException;
 
 public interface Environment {
 
@@ -52,15 +55,18 @@ public interface Environment {
     /** Clears all cells in the sheet. */
     void clearAllCells();
 
-    /** Returns the repository of the environment. */
-    Map<Coordinate, Cell> getRepository();
+    /** Loads the specified input to the sheet at the specified key.*/
+    void loadToSheet(String key, String input);
+    
+    /** Checks the validity of the sheet after loading new content. */
+    void checkValidity();
+
+    /** Returns a set of the contents of the repository of the environment. */
+    Set<Map.Entry<String, String>> getEntrySet();
 
     /** Notify all observers that the environment has been modified. */
     void externalNotify();
-
-    /** Returns the input parser that the environment uses to parse input strings. */
-    InputParser getInputParser();
-
+    
     /**
      * Adds an observer to the environment. Enables the observer to be notified when this
      * environment has been modified.

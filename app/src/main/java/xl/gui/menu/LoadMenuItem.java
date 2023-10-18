@@ -13,17 +13,16 @@ class LoadMenuItem extends OpenMenuItem {
     }
 
     protected void action(String path) throws FileNotFoundException {
-        var repository = xl.getSheet().getRepository();
-        var parser = xl.getSheet().getInputParser();
+        //var repository = xl.getSheet().getRepository();
+        //var parser = xl.getSheet().getInputParser();
         // call xllbufferreader
         try {
             XLBufferedReader XLBR = new XLBufferedReader(path);
-            XLBR.load(repository, parser);
+            XLBR.load(xl.getSheet());
             XLBR.close();
         } catch (Exception e) {
-            throw new XLException("Can not find given path");
+            statusLabel.setText("File couldn't be loaded");
         }
-        // call externalnotify
         xl.getSheet().externalNotify();
     }
 
