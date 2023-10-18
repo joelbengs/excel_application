@@ -1,11 +1,232 @@
 # EDAF60 - grupp 46: XL
 
+## The project
+
+Welcome to our XL application! Our team has built a spreadsheet application that mimics the functionality of Microsoft's Excel. With XL, you can create, edit, and manipulate spreadsheets with ease. Our application is designed to be user-friendly and intuitive, with a familiar interface that will make it easy for you to get started.
+
+![Demo 1](assets/Demo1.png)
+
+XL is built using Java and the Swing GUI toolkit, and is designed to be cross-platform, so you can use it on any operating system that supports Java. We've also included a number of features that will make your spreadsheet experience even better, including support for formulas, cell formatting, and more.
+
+We've used a series of coding patterns to build XL, including Factories, Template, Observer, MVC, and dependency inversion. These patterns help us to create a well-structured, maintainable codebase that is easy to extend and modify.
+
+This project is part of the course EDAF60 - Object-oriented Modelling and Design at the Faculty of Engineering, Lund University, Fall 2023.
+
+## Group members
+
 + Joel Bengs (jo5531be-s)
 + Gustaf Jonson Stamfält (gu3505jo-s)
 + Victor Pekkari (vi8011pe-s)
 + Henrik Vester (he5834ve-s)
 
-## Svar på designfrågor
+## UML Class diagram for the Model
+
+~~~mermaid
+
+classDiagram
+
+    class Environment{
+        + value(String) : Optional~Double~
+        + toString(Environment) : Optional~String~
+        + stringValue(Coordinate) : Optional~String~
+        + gridContent(Coordinate) : Optional~String~
+        + addToSheet(Coordinate, String) : void
+        + clearCell(Coordinate): void
+        + clearAllCells(): void
+        + getRepository(): Map~Coordinate-Cell~
+        + externalNotify(): void
+        + getInputParser(): InputParser
+        + addObserver(SheetPanel): void
+    }
+    <<Interface>> Environment
+
+    class Sheet {
+        - map : TreeMap~Coordinate-Cell~
+        - inputParser : InputParser
+        + value(String) : Optional~Double~
+        + toString(Environment) : Optional~String~
+        + stringValue(Coordinate) : Optional~String~
+        + gridContent(Coordinate) : Optional~String~
+        + addToSheet(Coordinate, String) : void
+        + clearCell(Coordinate): void
+        + clearAllCells(): void
+        + getRepository(): Map~Coordinate-Cell~
+        + externalNotify(): void
+        + getInputParser(): InputParser
+        + addObserver(SheetPanel): void
+    }
+
+    class Coordinate {
+        - row : Int
+        - col : Int
+        + Coordinate(Int, Int)
+        + getRow() : Int
+        + getCol() : Int
+        + toString() : String
+        + equals(Object): Int
+        + compareTo(Coordinate) : Int
+    }
+
+    class Cell {
+        + value(Environment) : Double
+        + toString(Environment) : String
+        + gridString(Environment) : String
+    }
+
+    class Bomb{
+        + value() : Double
+        + toString() : String
+        + gridString(Environment) : String
+    }
+
+    class CellFactory {
+        + build(String) : Cell
+    }
+    <<Interface>> CellFactory
+
+    class ExprFactory {
+        - exprParser : ExprParser
+        + build(String) : Cell
+    }
+
+    class CommentFactory {
+        + build(String) : Cell
+    }
+
+    class InputParser{
+        + parse(String) : Cell
+        + parseAsCommen(String) : Cell
+        + parseAsExpr(String) : Cell
+    }
+
+    class ExprParser {
+        + build(Reader) : Expr
+        + build(String) : Expr
+        - expr() : Expr
+        - factor() : Expr
+        - term() : Expr
+    }
+
+    CellFactory <|.. ExprFactory
+    CellFactory <|.. CommentFactory
+    CellFactory <|.. BombFactory
+    ExprFactory -- ExprParser
+    ExprParser -- Cell
+    CommentFactory -- Cell
+    BombFactory -- Cell
+    Sheet -- Coordinate 
+    Sheet -- InputParser
+    InputParser -- CellFactory
+    Environment <|.. Sheet
+
+~~~
+
+## UML Class Diagram for the Cells
+
+~~~mermaid
+classDiagram
+    
+    class Cell {
+        + value(Environment) : Double
+        + toString(Environment) : String
+        + gridString(Environment) : String
+    }
+    <<Interface>> Cell
+
+    Cell <|.. Expr
+    Cell <|.. Comment
+    Cell <|.. Bomb
+
+    class Expr{
+        + value(Environment) : Double
+        + toString() : String
+        + toString(int)* : String
+    }
+    <<Abstract>> Expr
+
+    Expr <|.. Num
+    Expr <|.. BinaryExpr
+    Expr <|.. Variable
+    Expr o-- BinaryExpr
+
+    class Num {
+        - adjustment: NumberAdjustment
+        - value : Double
+        + Num(Double)
+        + value(Environment): Double
+        + toString(Int): String
+        + gridString(Environment): String
+    }
+
+    class BinaryExpr {
+        - expr1 : Expr
+        - expr2 : Expr
+        # precedence1 : Int
+        # precedence2 : Int
+        # BinaryExpr(Expr, Expr)
+
+        # op(Double, Double)* : Double
+        # opString()* : String
+
+        + value(Environment): Double
+        + toString(Int) : String
+        + gridString(Environment) : String
+    }
+    <<Abstract>> BinaryExpr
+
+    BinaryExpr <|.. Add
+    BinaryExpr <|.. Sub
+    BinaryExpr <|.. Mul
+    BinaryExpr <|.. Div
+
+    class Add {
+        + Add(Expr, Expr)
+        + op(Double, Double) : Double
+        # opString() : String
+    }
+
+    class Sub {
+        + Sub(Expr, Expr)
+        + op(Double, Double) : Double
+        # opString() : String
+    }
+
+    class Mul {
+        + Mul(Expr, Expr)
+        + op(Double, Double) : Double
+        # opString() : String
+    }
+
+    class Div {
+        + Div(Expr, Expr)
+        + op(Double, Double) : Double
+        # opString() : String
+    }
+
+    class Variable {
+        - coordinate : Coordinate
+        + Variable(Coordinate)
+        + toString(Int) : String
+        + gridString(Environment): String
+        + value(Environment) : Double
+    }
+
+    class Comment{
+        - message : String
+        + Comment(String)
+        + toString(Environment) : String
+        + gridString(Environment): String
+        + value(Environment): Double
+    }
+
+    class Bomb{
+        + value(Environment) : Double
+        + toString() : String
+        + gridString(Environment): String
+    }
+~~~
+
+## Preperatory Design Discussion
 
 ![Model](images/model.png)
 
@@ -100,172 +321,4 @@ För att köra programmet kan man skriva:
 ~~~
 
 i projektets rot-katalog.
-<<Interface>> CellFactory
 
-
-## Klassdiagram Cell
-
-~~~mermaid
-classDiagram
-    
-    class Cell {
-        +value(Environment): Double
-        +toString() : String
-    }
-    <<Interface>> Cell
-
-    Cell <|.. Expr
-    Cell <|.. Comment
-    Cell <|.. Bomb
-
-    class Expr{
-        + toString() String
-        + toString(Int)* String
-        + value(Environment)* Double
-    }
-    <<Abstract>> Expr
-
-    Expr <|.. Num
-    Expr <|.. BinaryExpr
-    Expr <|.. Variable
-    Expr o-- BinaryExpr
-
-    class Num {
-        -value : Double
-        +Num(Double)
-        +value(Environment) Double
-        +toString(Int) String
-    }
-
-    class BinaryExpr {
-        - expr1 : Expr
-        - expr2 : Expr
-        # precedence1 : Int
-        # precedence2 : Int
-        #BinaryExpr(Expr, Expr)
-        #op(Double, Double)* : Double
-        #opString()* : String
-        +value(Environment): Double
-        +toString(Int) : String
-    }
-    <<Abstract>> BinaryExpr
-    BinaryExpr <|.. Add
-    BinaryExpr <|.. Sub
-    BinaryExpr <|.. Mul
-    BinaryExpr <|.. Div
-
-    class Add {
-        +Add(Expr, Expr)
-        +op(Double, Double) : Double
-        #opString() : String
-    }
-
-    class Sub {
-        +Sub(Expr, Expr)
-        +op(Double, Double) : Double
-        #opString() : String
-    }
-
-    class Mul {
-        +Mul(Expr, Expr)
-        +op(Double, Double) : Double
-        #opString() : String
-    }
-
-    class Div {
-        +Div(Expr, Expr)
-        +op(Double, Double) : Double
-        #opString() : String
-    }
-
-    class Variable {
-        -name : String
-        +Variable(String)
-        +toString(Int) : String
-        +value(Environment) : Double
-    }
-
-    class Comment{
-        - text : String
-        + Comment(String)
-        + value(Environment): Double
-        + toString(Environment) : String
-    }
-
-    class Bomb{
-        +value() : Double
-        +toString() : String
-    }
-~~~
-
-## Klassdiagram Sheet
-~~~mermaid
-classDiagram
-
-    class Environment{
-        + value(String) : Double
-    }
-    <<Interface>> Environment
-
-    class Sheet {
-        - map : TreeMap~Coordinate-Cell~
-        +addToSheet(Coordinate, Cell)
-    }
-
-    class Coordinate {
-        - row : Int
-        - col : Int
-        + Coordinate(Int, Int)
-        + getRow() : Int
-        + getCol() : Int
-    }
-
-    class CellFactory {
-        +build(Reader) : Cell
-    }
-    <<Interface>> CellFactory
-
-    class ExprFactory {
-        - exprParser : ExprParser
-        +ExprFactory()
-        +build(Reader) : Cell
-    }
-
-    class CommentFactory {
-        +build(Reader) : Cell
-    }
-
-    class BombFactory {
-        +build(Reader) : Cell
-    }
-
-    class InputParser{
-        - expr: ExprFactory 
-        - comment : CommentFactory
-        - bomb : BombFactory
-        + parse(String)
-    }
-
-    class ExprParser {
-        + build(Reader) : Cell
-    }
-
-    class Cell {
-        +value(Environment): Double
-        +toString() : String
-    }
-    <<Interface>> Cell
-
-    CellFactory <|.. ExprFactory
-    CellFactory <|.. CommentFactory
-    CellFactory <|.. BombFactory
-    ExprFactory -- ExprParser
-    ExprParser -- Cell
-    CommentFactory -- Cell
-    BombFactory -- Cell
-    Sheet -- Coordinate 
-    Sheet -- InputParser
-    InputParser -- CellFactory
-    Environment <|.. Sheet
-
-~~~

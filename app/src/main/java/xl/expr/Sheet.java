@@ -96,9 +96,6 @@ public class Sheet extends Observable implements Environment {
     public void externalNotify() {
         this.setChanged();
         this.notifyObservers();
-        for (Map.Entry<Coordinate, Cell> m : this.repository.entrySet()) {
-            System.out.println("Coordinate: " + m.getKey() + " Cell: " + m.getValue());
-        }
     }
 
     @Override

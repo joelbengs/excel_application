@@ -33,7 +33,6 @@ public class SlotLabels extends GridPanel {
                         new MouseAdapter() {
                             @Override
                             public void mousePressed(MouseEvent e) {
-                                System.out.println("pressed at coordinate " + coordinate);
                                 selectedCell.setSelectedCoordinate(coordinate);
                             }
                         });
@@ -44,18 +43,9 @@ public class SlotLabels extends GridPanel {
     }
 
     public void update(Environment env) {
-        
         for (SlotLabel slotLabel : labelList) {
             var coordinate = slotLabel.getCoordinate();
-            // var value = env.value(coordinate);
             var gridString = env.gridContent(coordinate);
-            // if (value.isPresent()) {
-            /* if (gridString.isPresent()) {
-                // slotLabel.setText(String.valueOf(value.get()));
-                slotLabel.setText(gridString.get());
-            } else {
-                slotLabel.setText("          ");
-            } */
             slotLabel.setText(gridString.orElse("            "));
 
             if (selectedCell.getSelectedCoordinate().equals(coordinate)) {
@@ -65,27 +55,4 @@ public class SlotLabels extends GridPanel {
             }
         }
     }
-
-    /*
-     * public void update(Environment env) {
-     *
-     * for (SlotLabel slotLabel : labelList) {
-     * var coordinate = slotLabel.getCoordinate();
-     *
-     * if (coordinate != selectedCell.getSelectedCell()) {
-     * slotLabel.setBackground(Color.WHITE);
-     * } else {
-     * slotLabel.setBackground(Color.YELLOW);
-     * }
-     * var value = env.value(coordinate); // får value, vad som står i rutan
-     * if (value.isPresent()) {
-     * slotLabel.setText(String.valueOf(value.get()));
-     * } else {
-     * slotLabel.setText("          ");
-     * }
-     * }
-     *
-     * }
-     */
-
 }
